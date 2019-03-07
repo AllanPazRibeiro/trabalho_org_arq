@@ -16,12 +16,12 @@ fs.readFile('assembly.txt', 'utf8', function(err, data) {
         result[branch] = item[branch] != 'cls' ? item[branch] : '';
         result[command] = item[command] != '' ? item[command] : '';
         result[variables] = item[variables] != '' ? item[variables] : '';
-        
+        console.log(result);
 
       for (let i = 0; i < result[variables].length; i++){
         var variables_t = result[variables].split('\t') != 'LOOP' ? result[variables].split('\t')  : '';
       }
-        console.log(variables_t);
+        //console.log([variables_t]);
 
         
 
