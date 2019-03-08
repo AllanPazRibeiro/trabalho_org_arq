@@ -1,7 +1,6 @@
 
 const fs = require('fs');
 
-
 const leArquivo = () => {
 	fs.readFile('assembly.txt', 'utf8', function(err, data) { 
 	let lines = data.split('\n');
@@ -10,39 +9,50 @@ const leArquivo = () => {
 
 	for(let line = 0; line < lines.length; line++){
 		//let words = lines[line].split('\t');
-		var variables = lines[line].match(/((\$[TS])?\d,\$[TS]\d)((,\$[TS]\d)|(,\w*))?/g) != null ? 
-		lines[line].match(/((\$[TS])?\d,\$[TS]\d)((,\$[TS]\d)|(,\w*))?/g) : '\t';
-		//console.log(variables);
+		let variables = lines[line].match(/((\$[TS])\S?\d,\$[TS]\d)\S((,\$[TS]\d)|(,\w*)\S)?/g);
+		if (variables != null && variables.length > 0){
+			variables_arr.push(variables);
+		}
 	}
 
 	//Pula 1
-	for(let i = 1; i < lines.length; i++){
-		var variables_next = lines[i].match(/((\$[TS])?\d,\$[TS]\d)((,\$[TS]\d)|(,\w*))?/g) != null ? 
-		lines[i].match(/((\$[TS])?\d,\$[TS]\d)((,\$[TS]\d)|(,\w*))?/g) : '\t';
-		console.log(intersection(variables, variables_next));
+	for(let line2 = 1; line2 < lines.length; line2++){
+		let variables = lines[line2].match(/((\$[TS])\S?\d,\$[TS]\d)\S((,\$[TS]\d)|(,\w*)\S)?/g);
+		if (variables != null && variables.length > 0) {
+			variables_next_arr.push(variables);
+		}
 	}
-
-		//intersection(variables_arr, variables_next_arr);
-		console.log('\n');
+	
 		console.log('\n');
 		console.log('-------------variables_arr--------------------------------------------');
 		console.log(variables_arr+ '\n');
 		console.log('----------------------------------------------------------------------');
 		console.log('\n');
-		console.log('\n');
 		console.log('-------------variables_next_arr---------------------------------------');
-		console.log(Array.isArray(variables_next) + '\n');
-		console.log('\n');
+		console.log(variables_next_arr + '\n');
 		console.log('\n');
 		console.log('----------------------------------------------------------------------');
+		console.log('\n');
 		console.log('-------------intersection---------------------------------------------');
-		console.log(intersection(variables, variables_next));
+		console.log(intersection(variables_arr, variables_next_arr));
 		console.log('----------------------------------------------------------------------');
+		console.log('\n');
 		
 	});
 }
 leArquivo();
 
+//Verifica a intersecção
 const intersection = (a, b) => {
-	return a.filter(value => -1 !== b.indexOf(value));
+	var aux = [];
+	var aux2 = [];
+	for(let i = 0; i < a.length; i++) {
+		aux.push(a[i]);
+	}
+
+	for(let j = 0; j < b.length; j++) {
+		aux2.push(b[j]);
+	}
+	return aux.filter(value => aux2.includes(value)+"\n");
 }
+
