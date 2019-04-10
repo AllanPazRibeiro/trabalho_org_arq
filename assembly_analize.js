@@ -19,57 +19,56 @@ const ParseArquivo = () => {
 	});
 
 	for(linesIndex in linesObj) {
-		Intersection(linesObj[linesIndex], linesObj[parseInt(linesIndex) + 1], linesObj[parseInt(linesIndex) + 2]);
-		Assembly_nopped(linesObj[linesIndex], linesObj[parseInt(linesIndex) + 1]);
+		WriteFile(linesObj[linesIndex]);
+		let Nop = Intersection(linesObj[parseInt(linesIndex) - 1], linesObj[linesIndex]);
+		WriteFile(Nop);
+		let Nop2 = Intersection(linesObj[parseInt(linesIndex) - 2], linesObj[linesIndex]);
+		WriteFile(Nop2);
 	}
 
 	});
 }
 ParseArquivo();
 
-var Intersection = (line1, line2, line3) => {
-	if(line2) {
+var Intersection = (line1, line2) => {
+	if(line2 && line1) {
 		for(let parameter of line2.parameters) {
-			if(line1.inst == 'ADD' || line1.inst == 'SUB' || line1.inst == 'ADDI'){
+			if(line2.inst == 'ADD' || line2.inst == 'SUB' || line2.inst == 'ADDI'){
 
-				if(line1.parameters[0] == parameter) {
+				if (line2.parameters[0] == parameter) {
 					console.log(line1.inst + ' tem conflito com ' + line2.inst);
+					return true;
 				}					
 
-			} else if(line1.inst == 'SW' || line1.inst == 'LW') {
+			} else if(line2.inst == 'SW' || line2.inst == 'LW') {
 
-				if(line1.parameters[1] == parameter){
+				if (line2.parameters[1] == parameter) {
 					console.log(line1.inst + ' tem conflito com ' + line2.inst);
+					return true;
 				}
 
-				if(line1.parameters[2] == parameter) {
+				if (line2.parameters[2] == parameter) {
 					console.log(line1.inst + ' tem conflito com ' + line2.inst);
+					return true;
 				}
 			}	
-		}
-	}
-	if(line3) {
-		for(let parameter2 of line3.parameters) {
-			if(line1.inst == 'ADD' || line1.inst == 'SUB' || line1.inst == 'ADDI'){
-				if(line1.parameters[0] == parameter2)
-					console.log(line1.inst + ' tem conflito com ' + line3.inst);
-
-			} else if(line1.inst == 'SW' || line1.inst == 'LW'){
-				
-				if(line1.parameters[1] == parameter2)
-					console.log(line1.inst + ' tem conflito com ' + line3.inst);
-
-				if(line1.parameters[2] == parameter2)
-					console.log(line1.inst + ' tem conflito com ' + line3.inst);
-			}
 		}
 	}
 
 }
 
-var WriteFile = (line, bool) => {
-	fs.appendFile('assembly_with_nop.txt', bool == true ? 
-		line +'\n\t\tnop\n\t\tnop\n\t\tnop\n' : line + '\n', function (err) {
+var WriteFile = (line) => {
+	let content = '';
+	if(line) {
+		if( typeof(line) ===  'boolean' ) {
+			content = '\n\t\tnop\n\t\tnop';
+		}
+		if(typeof(line) !==  'boolean') {
+			content = '\n' + line.linesItSelf;
+		}
+	}
+
+	fs.appendFile('assembly_with_nop.txt', content, function (err) {
 			if (err) throw err;
 				console.log('Saved!');
 	});
